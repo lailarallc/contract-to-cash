@@ -78,3 +78,9 @@ On that deal we signed in Q1 — what did we actually net, and where did the mon
   10. Added test suites (11 vitest + 7 pytest, all passing)
 - **Deferred:** None — all findings addressed
 - **Next review:** 2026-06-22
+
+### 2026-09-23 — Audit (health check only)
+- **Findings:** 1 critical, 5 important, 4 nice-to-have
+- **Top concerns:** Client mode (client_mode.py) counts unpaid invoices (blank payment_date, amount_received 0) as fully leaked, so open receivables inflate leakage and deflate cents-per-dollar in client deliverables. The demo headline generator truncates instead of rounding (int(cents)), and the page copy is inconsistent: it cites a "post-audit" category that does not exist and calls the residual both "payment-timing" and "un-itemized trade spend". The deployed SPA also lacks the Lailara brand frame, and HANDOFF.md is two months and ~25 commits stale.
+- **Action taken:** Audit only — no fixes this session
+- **Next review:** 2026-12-22
