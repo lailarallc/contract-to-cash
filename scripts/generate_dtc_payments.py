@@ -23,6 +23,7 @@ import psycopg2
 import psycopg2.extras
 
 from db import DEC2FLOAT  # noqa: F401 — registered at import time
+import prod_guard
 
 SEED = 42
 
@@ -42,6 +43,7 @@ def connect():
     if not url:
         print("ERROR: DATABASE_URL not set", file=sys.stderr)
         sys.exit(1)
+    prod_guard.check(url)  # refuses a fly tunnel to production
     return psycopg2.connect(url, cursor_factory=psycopg2.extras.RealDictCursor)
 
 
