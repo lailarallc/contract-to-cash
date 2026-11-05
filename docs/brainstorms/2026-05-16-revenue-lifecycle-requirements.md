@@ -13,7 +13,7 @@ A portfolio piece telling the full money-leak story for a $25M CPG brand — fro
 
 ## Problem Frame
 
-The CEO of a $25M specialty food brand running SalesPad cannot answer: "On that Walmart deal we signed in Q1 — what did we actually net?" The answer lives in 6+ systems with different schemas, granularities, and time horizons. Nobody can trace contracted revenue through shipment, receiving, deductions, and payment to arrive at a net number.
+The CEO of a $25M specialty food brand running SalesPad cannot answer: "On that national mass retailer deal we signed in Q1 — what did we actually net?" The answer lives in 6+ systems with different schemas, granularities, and time horizons. Nobody can trace contracted revenue through shipment, receiving, deductions, and payment to arrive at a net number.
 
 This isn't a hypothetical. Brands at this scale ($20M–$50M) have outgrown their tools but haven't yet invested in systems that provide visibility. They tolerate the blind spot because they can't see its cost. The portfolio piece makes the cost visible — and makes CFOs recognize their own company.
 
