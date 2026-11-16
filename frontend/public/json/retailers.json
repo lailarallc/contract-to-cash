@@ -1,7 +1,7 @@
 {
   "leakage": [
     {
-      "name": "Walmart",
+      "name": "National mass retailer",
       "gross": 10789650.0,
       "net": 9100223.16,
       "leakage": 1689426.84,
@@ -9,7 +9,7 @@
       "remittances": 37
     },
     {
-      "name": "Kroger",
+      "name": "Conventional grocer",
       "gross": 10557622.8,
       "net": 9156826.33,
       "leakage": 1400796.47,
@@ -17,7 +17,7 @@
       "remittances": 37
     },
     {
-      "name": "Whole Foods",
+      "name": "Natural grocer",
       "gross": 9832363.68,
       "net": 8749189.38,
       "leakage": 1083174.3,
@@ -25,7 +25,7 @@
       "remittances": 37
     },
     {
-      "name": "Sprouts",
+      "name": "Regional natural grocer",
       "gross": 8259744.72,
       "net": 7263820.7,
       "leakage": 995924.02,
@@ -33,7 +33,7 @@
       "remittances": 37
     },
     {
-      "name": "Costco",
+      "name": "Club retailer",
       "gross": 6608810.88,
       "net": 5723162.77,
       "leakage": 885648.11,
@@ -51,19 +51,19 @@
   ],
   "time_to_cash": [
     {
-      "name": "Kroger",
+      "name": "Conventional grocer",
       "avg_days": 28.3,
       "median_days": 28.0,
       "sample_size": 2558
     },
     {
-      "name": "Walmart",
+      "name": "National mass retailer",
       "avg_days": 27.6,
       "median_days": 28.0,
       "sample_size": 2858
     },
     {
-      "name": "Whole Foods",
+      "name": "Natural grocer",
       "avg_days": 25.6,
       "median_days": 26.0,
       "sample_size": 2047
@@ -75,13 +75,13 @@
       "sample_size": 1302
     },
     {
-      "name": "Sprouts",
+      "name": "Regional natural grocer",
       "avg_days": 25.4,
       "median_days": 25.0,
       "sample_size": 1877
     },
     {
-      "name": "Costco",
+      "name": "Club retailer",
       "avg_days": 23.9,
       "median_days": 24.0,
       "sample_size": 1669
@@ -93,7 +93,7 @@
     "coverage_pct": 26.3
   },
   "deduction_mix": {
-    "Costco": [
+    "Club retailer": [
       {
         "type": "promo_billback",
         "label": "Promo Billback",
@@ -143,7 +143,7 @@
         "count": 508
       }
     ],
-    "Kroger": [
+    "Conventional grocer": [
       {
         "type": "slotting",
         "label": "Slotting",
@@ -249,7 +249,7 @@
         "count": 338
       }
     ],
-    "Sprouts": [
+    "Regional natural grocer": [
       {
         "type": "pricing_error",
         "label": "Pricing Error",
@@ -305,7 +305,7 @@
         "count": 26
       }
     ],
-    "Walmart": [
+    "National mass retailer": [
       {
         "type": "spoilage",
         "label": "Spoilage",
@@ -361,7 +361,7 @@
         "count": 141
       }
     ],
-    "Whole Foods": [
+    "Natural grocer": [
       {
         "type": "damaged",
         "label": "Damaged",

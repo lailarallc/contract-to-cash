@@ -19,6 +19,22 @@ from db import connect
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "frontend" / "public" / "json"
 
+# Public surfaces show a role label for each trade partner, never the real
+# name (reference/retailer_display_labels.json, vendored from the canon repo).
+# The database keeps the real names; the label is applied here, on export.
+_LABELS = json.loads((ROOT / "reference" / "retailer_display_labels.json").read_text(encoding="utf-8"))
+PUBLIC_NAME = {
+    entry["name"]: entry["label"][0].upper() + entry["label"][1:]
+    for group in ("retailers", "distributors")
+    for entry in _LABELS[group].values()
+}
+
+
+def public_name(name: str) -> str:
+    """Role label for a dataset partner name; unknown names pass through."""
+    return PUBLIC_NAME.get(name, name)
+
+
 PERIOD_START = "2023-01-01"
 PERIOD_END = "2026-01-02"
 PERIOD_LABEL = "Full corpus, Jan 2023 – Jan 2026"
@@ -299,7 +315,7 @@ def export_retailers(cur):
     for row in cur.fetchall():
         leak_pct = row["leakage"] / row["gross"] * 100 if row["gross"] else 0
         retailer_leakage.append({
-            "name": row["retailer_name"],
+            "name": public_name(row["retailer_name"]),
             "gross": round(row["gross"], 2),
             "net": round(row["net"], 2),
             "leakage": round(row["leakage"], 2),
@@ -339,7 +355,7 @@ def export_retailers(cur):
     time_to_cash = []
     for row in cur.fetchall():
         time_to_cash.append({
-            "name": row["retailer_name"],
+            "name": public_name(row["retailer_name"]),
             "avg_days": float(row["avg_days"]),
             "median_days": float(row["median_days"]),
             "sample_size": row["sample_size"],
@@ -372,7 +388,7 @@ def export_retailers(cur):
     """, (PERIOD_START, PERIOD_END))
     deduction_mix = {}
     for row in cur.fetchall():
-        name = row["retailer_name"]
+        name = public_name(row["retailer_name"])
         if name not in deduction_mix:
             deduction_mix[name] = []
         deduction_mix[name].append({
