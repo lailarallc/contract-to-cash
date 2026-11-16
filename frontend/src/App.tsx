@@ -38,7 +38,7 @@ export function App() {
   const leakageSpread = (maxLeakage - minLeakage).toFixed(1);
 
   // Derive the leakage-vs-size relationship from the data instead of asserting
-  // it: in the shipped data the LARGEST partner (Walmart) has the HIGHEST rate.
+  // it: in the shipped data the LARGEST partner has the HIGHEST rate.
   const byGrossDesc = [...retailers.leakage].sort((a, b) => b.gross - a.gross);
   const byLeakageDesc = [...retailers.leakage].sort((a, b) => b.leakage_pct - a.leakage_pct);
   const largestRetailer = byGrossDesc[0];

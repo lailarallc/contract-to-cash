@@ -23,7 +23,9 @@ JSON_DIR = Path(__file__).resolve().parent.parent / "frontend" / "public" / "jso
 # Canonical-content SHA-256 (json.dumps sorted, compact) pinned 2026-08-05.
 GOLDEN = {
     "summary": "7196b164c0e05d5223606155a2ebff2437d50c03988f44cb4d0594e9aba3107e",
-    "retailers": "04b99dd22d19d49941d61bae14d2a5b10ff9e9c10c378d864afb72371ab859ed",
+    # Re-baselined 2026-11-15, owner approved (DECISIONS.md): partner names
+    # replaced by role labels. Names only; every number is unchanged.
+    "retailers": "6d43addebcad39f5b688f97a85e7e492cccc36a7d0ec3ce3933321e20e01da78",
     "lifecycle": "d1e007c9dd3dd2544ee156b179edf68101da485487d6e8b5d4c4d31ffee88a3f",
 }
 
