@@ -124,6 +124,14 @@ Each entry:
 
 ## Writing & Voice
 
+### 2026-11-15 — Role labels replace partner names; retailers.json golden re-baselined
+
+- **Decision (owner, 2026-11-15, "do A"):** the report shows a role label for each trade partner (national mass retailer, club retailer, and so on), never the real name. The label is applied on export in `scripts/export_json.py` from `reference/retailer_display_labels.json`, so the shipped `frontend/public/json/retailers.json` carries labels too, not only the screen.
+- **Why:** the fleet label rule (lailara-website DECISIONS 2026-11-05). The data file pairs each partner with dollar amounts and is publicly readable. A screen-only swap would have left the names in it.
+- **Golden:** `tests/test_demo_golden.py` pins the file's content. The `retailers` SHA moved from `04b99dd2…` to `6d43adde…` and was re-baselined with this approval. Only the six names changed; every number is identical (checked by comparing the old and new files with names removed).
+- **Not done:** the export was not re-run against the database; the same mapping was applied to the committed file. `tests/test_retailer_labels.py` fails if a real partner name returns.
+- **Do not:** show a real partner name beside a Cinderhaven figure on any public surface of this repo.
+
 ---
 
 ## Reversed / Superseded
