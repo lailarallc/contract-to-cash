@@ -1,0 +1,49 @@
+# Typed figures this repo prints with no canon key (owner, 2026-11-15; plan U19, U22).
+# One row per figure per location. The platform's fleet check holds the row count to a ceiling that only
+# falls: give a figure a key (or stop printing it) and delete its row. listed=yes: the read map names it, and
+# U19 owes its key; listed=no: U22 works it down. Generated from the 2026-11-15 manifest pass.
+file_line	printed	exact_value	meaning	source	kind	listed
+README.md:11	$52.7M invoiced	52692614.79	combined invoiced, 36-month window	frontend/public/json/summary.json combined.total_invoiced	prose-only	yes
+README.md:11	6 retail partners	6	direct retail partner count	frontend/public/json/summary.json meta.retailers_b2b	prose-only	no
+README.md:11	36-month window	36	analysis window months	prose only (export period runs to 2026-01-02)	prose-only	no
+README.md:13	9 deduction categories	9	itemized deduction types in waterfall	frontend/public/json/lifecycle.json b2b.stages with count>0	prose-only	yes
+README.md:14	10.0% to 15.7%		retailer leakage rate range (Regional Group 10.0 to Walmart 15.7)	frontend/public/json/retailers.json leakage[].leakage_pct	prose-only	no
+README.md:15	23.9–28.3 days		average order-to-payment days range by retailer (Costco 23.9 to Kroger 28.3)	frontend/public/json/retailers.json time_to_cash[].avg_days	prose-only	no
+README.md:9	$52.7M over three years	52692614.79	combined invoiced (B2B gross payments + DTC gross), Jan 2023-Jan 2026	frontend/public/json/summary.json combined.total_invoiced; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23):54-122	prose-only	yes
+frontend/public/json/summary.json:10	158982.75	158982.75	deductions recovered (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json b2b.recovered; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:11	12.8	12.8	B2B leakage % (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json b2b.leakage_pct; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:12	222	222	retailer remittances (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json b2b.remittance_count; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:15	563837.43	563837.43	DTC gross revenue, 3 years (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json dtc.gross; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:19	523756.82	523756.82	DTC net received (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json dtc.net_received; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:20	7.1	7.1	DTC leakage % (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json dtc.leakage_pct; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:23	52692614.79	52692614.79	combined invoiced (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json combined.total_invoiced; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:24	45991310.83	45991310.83	combined net cash (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json combined.total_net; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:25	6701303.96	6701303.96	combined leakage (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json combined.total_leakage; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:26	87.3	87.3	cents of cash per invoiced dollar (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json combined.cents_per_dollar; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	yes
+frontend/public/json/summary.json:29	6	6	direct retail partners (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json meta.retailers_b2b; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:3	0.873	0.873	cash received per invoiced dollar (ratio) (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json headline_ratio; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:30	46760	46760	B2B orders (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json meta.orders_b2b; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:31	18497	18497	DTC orders (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json meta.orders_dtc; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:32	50	50	SKU count (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json meta.skus; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:5	52128777.36	52128777.36	B2B gross payments/invoiced, Jan 2023-Jan 2026 (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json b2b.invoiced; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/public/json/summary.json:7	45467554.01	45467554.01	B2B net cash received (rendered by frontend/src/App.tsx)	frontend/public/json/summary.json b2b.net_received; scripts/export_json.py (period 2023-01-01 to 2026-01-02, :22-23)	repo-export	no
+frontend/src/App.tsx:102	{residualTotal} (renders $5.54M)	5542541.43	unreconciled gross-to-net residual	frontend/public/json/lifecycle.json b2b.stages[unreconciled].amount	repo-export	no
+frontend/src/App.tsx:124	{minLeakage}% to {maxLeakage}% (renders 10.0% to 15.7%; 5.7-point spread)	15.7	retailer leakage range, max Walmart 15.7, min Regional Group 10.0	frontend/public/json/retailers.json leakage[].leakage_pct	repo-export	no
+frontend/src/App.tsx:148	fastest/slowest avg days (renders 24 / 28)	28.3	time to cash: Costco 23.9 days, Kroger 28.3 days	frontend/public/json/retailers.json time_to_cash[].avg_days	repo-export	yes
+frontend/src/App.tsx:159	{covered_orders} ({coverage_pct}% of {total_orders}) (renders 12,311 / 26.3% / 46,760)	12311	orders with a recorded payment / coverage / total orders	frontend/public/json/retailers.json time_to_cash_meta	repo-export	no
+frontend/src/App.tsx:77	{cents_per_dollar}¢ (renders 87.3¢)	87.3	cents of cash per invoiced dollar, hero	frontend/public/json/summary.json combined.cents_per_dollar	repo-export	yes
+frontend/src/App.tsx:95	{totalShortfall} (renders $6.66M)	6661223.35	B2B gross-to-net shortfall	frontend/public/json/lifecycle.json b2b.gross - b2b.net	repo-export	no
+scripts/validate_cross_project.py:101	5838	5838	B2B order count (comment says CY2024)	literal (live SQL in same function, public_marts) fct_retailer_orders	warehouse-query	yes
+scripts/validate_cross_project.py:102	31409072.52	31409072.52	B2B invoiced total (CY2024 per comment)	literal (live SQL in same function, public_marts)	warehouse-query	yes
+scripts/validate_cross_project.py:106	10000	10000	DTC order count	literal (live SQL in same function, public_marts)	warehouse-query	yes
+scripts/validate_cross_project.py:112	5838	5838	shipment count (1:1 with B2B orders)	literal (live SQL in same function, public_marts) fct_retailer_shipments	warehouse-query	yes
+scripts/validate_cross_project.py:118	9	9	B2B retailer count (dim_retailers)	literal (live SQL in same function, public_marts)	warehouse-query	yes
+scripts/validate_cross_project.py:152	1537390.70	1537390.70	deduction total after DTC synthesis (stale prior value per :13)	literal; SQL :146-148 fct_retailer_deductions	warehouse-query	yes
+scripts/validate_cross_project.py:163	31409072.52	31409072.52	B2B order total after DTC synthesis	literal; SQL :157-159 fct_retailer_orders	warehouse-query	yes
+scripts/validate_cross_project.py:198	5-10%		DTC leakage plausibility band	constant	assumption	no
+scripts/validate_cross_project.py:83	9	9	distinct deduction types	literal (live SQL in same function, public_marts)	warehouse-query	yes
+scripts/validate_cross_project.py:87	1410	1410	disputes filed	literal (live SQL in same function, public_marts)	warehouse-query	yes
+scripts/validate_cross_project.py:91	98215.54	98215.54	dispute recovery dollars	literal (live SQL in same function, public_marts)	warehouse-query	yes
+tests/test_canonical_regression.py:99	87.3	87.3	cents per dollar, combined (tol 0.5)	frontend/public/json/summary.json combined.cents_per_dollar	repo-export	yes
+tests/test_demo_golden.py:44	87.3	87.3	cents per dollar, combined	frontend/public/json/summary.json	repo-export	yes
+tests/test_demo_golden.py:45	6	6	retail partners	frontend/public/json/summary.json meta.retailers_b2b	repo-export	no
