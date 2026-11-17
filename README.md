@@ -72,7 +72,6 @@ frontend/ (React SPA, deployed to Cloudflare Workers)
 | Script | Purpose |
 |--------|---------|
 | `scripts/explore_lifecycle.py` | Exploration queries (discovery phase) |
-| `scripts/generate_dtc_payments.py` | Synthesize Shopify payment data for DTC orders |
 | `scripts/export_json.py` | Production export: Postgres → JSON (36-month window, B2B + DTC) |
 | `scripts/validate_cross_project.py` | Reconciliation against other Cinderhaven projects (17 checks) |
 | `scripts/validate_exported_json.py` | Internal consistency of exported JSON (29 checks) |

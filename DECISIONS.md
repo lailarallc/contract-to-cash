@@ -35,11 +35,12 @@ Each entry:
 - **Scope:** All lifecycle calculations, export script, narrative text.
 - **Do not:** Present $31.41M as "revenue" without qualifying it as "invoiced."
 
-### 2026-05-16 — DTC payment data lives in raw schema (not dbt-governed)
-- **Decision:** DTC payment tables (shopify_transactions, shopify_refunds, shopify_chargebacks, shopify_payouts) written directly to the raw schema in Postgres.
-- **Why:** Faster to iterate during C2C development. Adding dbt models/sources would require changes to cinderhaven-data-platform. The export script queries raw directly. If other projects need DTC payments, governance can be added later.
-- **Scope:** scripts/generate_dtc_payments.py, scripts/export_json.py
-- **Do not:** Modify cinderhaven-data-platform dbt models for C2C-only needs.
+### ~~2026-05-16 — DTC payment data lives in raw schema (not dbt-governed)~~
+~~- **Decision:** DTC payment tables (shopify_transactions, shopify_refunds, shopify_chargebacks, shopify_payouts) written directly to the raw schema in Postgres.~~
+~~- **Why:** Faster to iterate during C2C development. Adding dbt models/sources would require changes to cinderhaven-data-platform. The export script queries raw directly. If other projects need DTC payments, governance can be added later.~~
+~~- **Scope:** scripts/generate_dtc_payments.py, scripts/export_json.py~~
+~~- **Do not:** Modify cinderhaven-data-platform dbt models for C2C-only needs.~~
+Superseded 2026-11-17: the platform now seeds these four tables; see "DTC payments are the platform's" under Reversed / Superseded.
 
 ---
 
@@ -142,3 +143,9 @@ When a decision is overturned:
 3. Note the link in both directions
 
 This preserves the history of why something is the way it is.
+
+### 2026-11-17 — DTC payments are the platform's; this repo writes no warehouse table
+- **Decision:** `scripts/generate_dtc_payments.py` is retired. The export and the cross-project validator read the platform's `raw.shopify_transactions`, `_refunds`, `_chargebacks` and `_payouts`, which the platform's own seed writes (`generation/seed_dtc.py`).
+- **Why:** Cinderhaven regen plan U19a: no consumer writes a platform schema. Production's four tables are the platform's (owner `cinderhaven_generator`, platform columns; reader run 44197063903), and the committed `summary.json` fees, refunds and lost chargebacks equal the platform tables' to the cent. The generator could no longer run: it reads `order_total` from `fct_dtc_orders`, which has no such column. Moving it to a schema of its own would have changed the printed DTC figures; retiring it changes none.
+- **Scope:** scripts/generate_dtc_payments.py (deleted), README script table.
+- **Do not:** write DTC payment rows from this repo. A figure the platform does not produce is a request to the platform.
