@@ -1,35 +1,35 @@
 {
   "headline": "For Every Dollar Invoiced, Eighty-Seven Cents Arrives as Cash",
-  "headline_ratio": 0.873,
+  "headline_ratio": 0.872,
   "b2b": {
-    "invoiced": 52128777.36,
-    "gross_payments": 52128777.36,
-    "net_received": 45467554.01,
-    "total_deductions": 1118681.92,
-    "deduction_count": 14947,
-    "recovered": 158982.75,
-    "leakage_pct": 12.8,
-    "remittance_count": 222
+    "invoiced": 52005749.76,
+    "gross_payments": 49885034.4,
+    "net_received": 43470341.01,
+    "total_deductions": 1114680.98,
+    "deduction_count": 14885,
+    "recovered": 158966.04,
+    "leakage_pct": 12.9,
+    "remittance_count": 210
   },
   "dtc": {
     "gross": 563837.43,
-    "processing_fees": 16951.33,
+    "processing_fees": 16913.95,
     "refunds": 21966.79,
     "chargebacks_lost": 1162.49,
-    "net_received": 523756.82,
+    "net_received": 523794.2,
     "leakage_pct": 7.1
   },
   "combined": {
-    "total_invoiced": 52692614.79,
-    "total_net": 45991310.83,
-    "total_leakage": 6701303.96,
-    "cents_per_dollar": 87.3
+    "total_invoiced": 50448871.83,
+    "total_net": 43994135.21,
+    "total_leakage": 6454736.62,
+    "cents_per_dollar": 87.2
   },
   "meta": {
     "retailers_b2b": 6,
-    "orders_b2b": 46760,
-    "orders_dtc": 18497,
+    "orders_b2b": 46648,
+    "orders_dtc": 18425,
     "skus": 50,
-    "time_window": "Full corpus, Jan 2023 – Jan 2026"
+    "time_window": "Jan 2023 \u2013 Dec 2025"
   }
 }

@@ -2,7 +2,7 @@
  "_generated": {
   "generated": "2026-11-17",
   "generator": "scripts/verify_canonical.py",
-  "platform_head": "1f20fa4",
+  "platform_head": "bc10ad2",
   "source": "reference/canonical_values.yml",
   "verified_against_production": "2026-07-29"
  },
@@ -33,6 +33,9 @@
   }
  },
  "chargebacks": {
+  "all_count": {
+   "all_time": 3357
+  },
   "distributor_count": {
    "all_time": 484
   },
@@ -141,11 +144,20 @@
   "tail_supplier_invoices": "2026-01-31||"
  },
  "deductions": {
+  "cross_channel_annualized": {
+   "all_time": 436804.72
+  },
   "cross_channel_rows": {
    "all_time": 16917
   },
   "cross_channel_total": {
    "all_time": 1346814.55
+  },
+  "cross_channel_uncontested_rows": {
+   "all_time": 10906
+  },
+  "cross_channel_uncontested_total": {
+   "all_time": 877620.26
   },
   "distributor_total": {
    "cy2023": 71786.02,
@@ -188,11 +200,31 @@
    "trailing_12m": 396833.39,
    "trailing_24m": 793678.88,
    "trailing_36m": 1116467.53
+  },
+  "retailer_types": {
+   "all_time": 9
   }
  },
  "deductions_recovery": {
+  "cross_channel_dispute_rate_pct": {
+   "all_time": 35.53
+  },
+  "cross_channel_recovered_per_deduction_pct": {
+   "all_time": 14.6
+  },
+  "cross_channel_recovered_per_disputed_pct": {
+   "all_time": 41.92
+  },
   "retailer_recovery_rate": {
    "all_time": 0.1421
+  }
+ },
+ "disputes": {
+  "cross_channel_filed": {
+   "all_time": 6011
+  },
+  "cross_channel_recovered": {
+   "all_time": 196694.71
   }
  },
  "distribution": {
@@ -385,6 +417,15 @@
   "retailer_cents_per_dollar": {
    "all_time": 87.22
   },
+  "retailer_dtc_cents_per_dollar": {
+   "trailing_36m": 87.21
+  },
+  "retailer_dtc_gross": {
+   "trailing_36m": 50448871.83
+  },
+  "retailer_dtc_net": {
+   "trailing_36m": 43994135.21
+  },
   "wholesale_cents_per_dollar": {
    "all_time": 89.08
   }
@@ -534,6 +575,9 @@
   "defect_sku_ttm": {
    "ttm_through_2025_12_27": 19487913.16
   },
+  "dtc_chargebacks_lost": {
+   "trailing_36m": 1162.49
+  },
   "dtc_gross": {
    "cy2023": 189654.73,
    "cy2024": 191510.62,
@@ -541,6 +585,15 @@
    "trailing_12m": 182672.08,
    "trailing_24m": 374182.7,
    "trailing_36m": 563837.43
+  },
+  "dtc_net": {
+   "trailing_36m": 523794.2
+  },
+  "dtc_processing_fees": {
+   "trailing_36m": 16913.95
+  },
+  "dtc_refunds": {
+   "trailing_36m": 21966.79
   },
   "gross_payments_distributor": {
    "cy2023": 7363461.6,
@@ -650,6 +703,23 @@
  "shipments": {
   "asn_late_rate": {
    "all_time": 0.0857
+  }
+ },
+ "sku_scoring": {
+  "cannibalization_risk_p75": {
+   "all_time": 0.07455
+  },
+  "complexity_ratio_p75": {
+   "all_time": 0.3012
+  },
+  "loaded_margin_pct_p25": {
+   "all_time": 48.43
+  },
+  "shelf_cost_p75": {
+   "all_time": 119627.83
+  },
+  "velocity_uspw_p25": {
+   "all_time": 4.3606
   }
  },
  "supersedes": [

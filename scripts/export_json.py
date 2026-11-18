@@ -35,9 +35,48 @@ def public_name(name: str) -> str:
     return PUBLIC_NAME.get(name, name)
 
 
+# One window for every part (owner, 2026-11-17): CY2023-2025, the canon's trailing_36m. B2B on remittances
+# received in the window; DTC on the orders placed in it, with each order's fees, refunds and lost
+# chargebacks whenever they fell. The headline figures are the canon keys; the export recomputes each and
+# stops if the database and the canon disagree (check_against_canon), so the page never prints a hand-edit.
 PERIOD_START = "2023-01-01"
-PERIOD_END = "2026-01-02"
-PERIOD_LABEL = "Full corpus, Jan 2023 – Jan 2026"
+PERIOD_END = "2025-12-31"
+PERIOD_LABEL = "Jan 2023 – Dec 2025"
+
+CANON = json.loads((ROOT / "reference" / "canonical_values.json").read_text(encoding="utf-8"))
+CANON_KEYS = {
+    # export figure -> canon key (trailing_36m = CY2023-2025)
+    "b2b.gross_payments": "revenue.gross_payments_retailer.trailing_36m",
+    "b2b.net_received": "revenue.net_collected_retailer.trailing_36m",
+    "dtc.gross": "revenue.dtc_gross.trailing_36m",
+    "dtc.processing_fees": "revenue.dtc_processing_fees.trailing_36m",
+    "dtc.refunds": "revenue.dtc_refunds.trailing_36m",
+    "dtc.chargebacks_lost": "revenue.dtc_chargebacks_lost.trailing_36m",
+    "dtc.net_received": "revenue.dtc_net.trailing_36m",
+    "combined.total_invoiced": "lifecycle.retailer_dtc_gross.trailing_36m",
+    "combined.total_net": "lifecycle.retailer_dtc_net.trailing_36m",
+    "combined.cents_per_dollar": "lifecycle.retailer_dtc_cents_per_dollar.trailing_36m",
+}
+
+
+def canon(key: str) -> float:
+    node = CANON
+    for part in key.split("."):
+        node = node[part]
+    return float(node)
+
+
+def check_against_canon(summary: dict) -> None:
+    """Every keyed figure equals its canon key at the key's precision; otherwise the export stops."""
+    bad = []
+    for path, key in CANON_KEYS.items():
+        section, field = path.split(".")
+        got, want = summary[section][field], canon(key)
+        places = 1 if field == "cents_per_dollar" else 2  # the page prints cents to one place
+        if round(got, places) != round(want, places):
+            bad.append(f"{path} = {got} but canon {key} = {want}")
+    if bad:
+        raise SystemExit("export disagrees with the canon:\n  " + "\n  ".join(bad))
 
 ONES = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
         "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
@@ -104,33 +143,13 @@ def export_summary(cur):
     """)
     retailer_count = cur.fetchone()["n"]
 
-    # DTC (within period).
-    cur.execute("""
-        SELECT
-            SUM(order_amount) AS gross,
-            SUM(processing_fee) AS fees,
-            SUM(net_amount) AS net
-        FROM raw.shopify_transactions
-        WHERE transaction_date BETWEEN %s AND %s
-    """, (PERIOD_START, PERIOD_END))
-    dtc_txn = cur.fetchone()
-
-    cur.execute("""
-        SELECT SUM(refund_amount) AS total FROM raw.shopify_refunds
-        WHERE refund_date BETWEEN %s AND %s
-    """, (PERIOD_START, PERIOD_END))
-    dtc_refunds = cur.fetchone()["total"] or 0
-
-    cur.execute("""
-        SELECT SUM(chargeback_amount) AS amount
-        FROM raw.shopify_chargebacks
-        WHERE outcome = 'lost' AND chargeback_date BETWEEN %s AND %s
-    """, (PERIOD_START, PERIOD_END))
-    cb_row = cur.fetchone()
-    dtc_cb = cb_row["amount"] or 0
-
-    dtc_leakage = (dtc_txn["fees"] or 0) + (dtc_refunds or 0) + dtc_cb
-    dtc_gross = dtc_txn["gross"] or 0
+    # DTC: the orders placed in the window, and each one's fees, refunds and lost chargebacks.
+    dtc = dtc_cohort(cur)
+    dtc_txn = {"fees": dtc["fees"]}
+    dtc_refunds = dtc["refunds"]
+    dtc_cb = dtc["chargebacks"]
+    dtc_leakage = dtc["fees"] + dtc_refunds + dtc_cb
+    dtc_gross = dtc["gross"]
     dtc_net = dtc_gross - dtc_leakage
 
     # DTC order count in period.
@@ -140,8 +159,9 @@ def export_summary(cur):
     """, (PERIOD_START, PERIOD_END))
     dtc_order_count = cur.fetchone()["n"]
 
-    # Combined.
-    combined_invoiced = b2b_invoiced + dtc_gross
+    # Combined, on one basis: B2B gross on the remittances received in the window (the invoice amounts
+    # they settle), not orders placed in it, so gross and net count the same remittances.
+    combined_invoiced = pay["b2b_gross"] + dtc_gross
     combined_net = pay["b2b_net"] + dtc_net
     combined_leakage = (pay["b2b_gross"] - pay["b2b_net"]) + dtc_leakage
 
@@ -188,8 +208,26 @@ def export_summary(cur):
         },
     }
 
+    check_against_canon(summary)
     write_json("summary.json", summary)
     return summary
+
+
+def dtc_cohort(cur) -> dict:
+    """DTC orders placed in the window (revenue.dtc_gross's cohort) and each order's leakage, whenever it fell."""
+    cur.execute("""
+        WITH o AS (
+            SELECT order_id, total FROM raw.shopify_orders
+            WHERE created_at::date BETWEEN %s AND %s
+        )
+        SELECT
+            (SELECT SUM(total) FROM o) AS gross,
+            (SELECT SUM(t.processing_fee) FROM raw.shopify_transactions t JOIN o USING (order_id)) AS fees,
+            (SELECT SUM(r.refund_amount) FROM raw.shopify_refunds r JOIN o USING (order_id)) AS refunds,
+            (SELECT SUM(c.chargeback_amount) FROM raw.shopify_chargebacks c JOIN o USING (order_id)
+              WHERE c.outcome = 'lost') AS chargebacks
+    """, (PERIOD_START, PERIOD_END))
+    return {k: (v or 0) for k, v in cur.fetchone().items()}
 
 
 def export_lifecycle(cur):
@@ -246,29 +284,12 @@ def export_lifecycle(cur):
             "recovered": 0,
         })
 
-    # DTC waterfall (within period).
-    cur.execute("""
-        SELECT SUM(order_amount) AS gross, SUM(processing_fee) AS fees
-        FROM raw.shopify_transactions
-        WHERE transaction_date BETWEEN %s AND %s
-    """, (PERIOD_START, PERIOD_END))
-    dtc_row = cur.fetchone()
-    dtc_gross = dtc_row["gross"] or 0
-    dtc_fees = dtc_row["fees"] or 0
-
-    cur.execute("""
-        SELECT SUM(refund_amount) AS total FROM raw.shopify_refunds
-        WHERE refund_date BETWEEN %s AND %s
-    """, (PERIOD_START, PERIOD_END))
-    dtc_refunds = cur.fetchone()["total"] or 0
-
-    cur.execute("""
-        SELECT SUM(chargeback_amount) AS amt
-        FROM raw.shopify_chargebacks
-        WHERE outcome = 'lost' AND chargeback_date BETWEEN %s AND %s
-    """, (PERIOD_START, PERIOD_END))
-    cb = cur.fetchone()
-    dtc_chargebacks = cb["amt"] or 0
+    # DTC waterfall: the same order cohort as summary.json.
+    dtc = dtc_cohort(cur)
+    dtc_gross = dtc["gross"]
+    dtc_fees = dtc["fees"]
+    dtc_refunds = dtc["refunds"]
+    dtc_chargebacks = dtc["chargebacks"]
 
     dtc_net = dtc_gross - dtc_fees - dtc_refunds - dtc_chargebacks
 

@@ -2,51 +2,51 @@
   "leakage": [
     {
       "name": "National mass retailer",
-      "gross": 10789650.0,
-      "net": 9100223.16,
-      "leakage": 1689426.84,
+      "gross": 10281828.0,
+      "net": 8664021.52,
+      "leakage": 1617806.48,
       "leakage_pct": 15.7,
-      "remittances": 37
+      "remittances": 35
     },
     {
       "name": "Conventional grocer",
-      "gross": 10557622.8,
-      "net": 9156826.33,
-      "leakage": 1400796.47,
-      "leakage_pct": 13.3,
-      "remittances": 37
+      "gross": 10084931.76,
+      "net": 8736926.51,
+      "leakage": 1348005.25,
+      "leakage_pct": 13.4,
+      "remittances": 35
     },
     {
       "name": "Natural grocer",
-      "gross": 9832363.68,
-      "net": 8749189.38,
-      "leakage": 1083174.3,
-      "leakage_pct": 11.0,
-      "remittances": 37
+      "gross": 9468869.28,
+      "net": 8417449.44,
+      "leakage": 1051419.84,
+      "leakage_pct": 11.1,
+      "remittances": 35
     },
     {
       "name": "Regional natural grocer",
-      "gross": 8259744.72,
-      "net": 7263820.7,
-      "leakage": 995924.02,
+      "gross": 7985591.28,
+      "net": 7016371.06,
+      "leakage": 969220.22,
       "leakage_pct": 12.1,
-      "remittances": 37
+      "remittances": 35
     },
     {
       "name": "Club retailer",
-      "gross": 6608810.88,
-      "net": 5723162.77,
-      "leakage": 885648.11,
-      "leakage_pct": 13.4,
-      "remittances": 37
+      "gross": 6280773.12,
+      "net": 5432224.35,
+      "leakage": 848548.77,
+      "leakage_pct": 13.5,
+      "remittances": 35
     },
     {
       "name": "Regional Group",
-      "gross": 6080585.28,
-      "net": 5474331.67,
-      "leakage": 606253.61,
+      "gross": 5783040.96,
+      "net": 5203348.13,
+      "leakage": 579692.83,
       "leakage_pct": 10.0,
-      "remittances": 37
+      "remittances": 35
     }
   ],
   "time_to_cash": [
@@ -89,8 +89,8 @@
   ],
   "time_to_cash_meta": {
     "covered_orders": 12311,
-    "total_orders": 46760,
-    "coverage_pct": 26.3
+    "total_orders": 46648,
+    "coverage_pct": 26.4
   },
   "deduction_mix": {
     "Club retailer": [
@@ -127,8 +127,8 @@
       {
         "type": "slotting",
         "label": "Slotting",
-        "amount": 18483.02,
-        "count": 212
+        "amount": 18314.48,
+        "count": 210
       },
       {
         "type": "label_fine",
@@ -139,8 +139,8 @@
       {
         "type": "short_ship",
         "label": "Short Ship",
-        "amount": 10150.71,
-        "count": 508
+        "amount": 10044.95,
+        "count": 502
       }
     ],
     "Conventional grocer": [
@@ -159,14 +159,8 @@
       {
         "type": "pallet_fine",
         "label": "Pallet Fine",
-        "amount": 29805.47,
-        "count": 311
-      },
-      {
-        "type": "promo_billback",
-        "label": "Promo Billback",
-        "amount": 29274.87,
-        "count": 313
+        "amount": 29601.59,
+        "count": 308
       },
       {
         "type": "spoilage",
@@ -175,22 +169,28 @@
         "count": 314
       },
       {
+        "type": "promo_billback",
+        "label": "Promo Billback",
+        "amount": 28854.47,
+        "count": 308
+      },
+      {
         "type": "damaged",
         "label": "Damaged",
-        "amount": 28400.02,
-        "count": 303
+        "amount": 28230.3,
+        "count": 301
       },
       {
         "type": "pricing_error",
         "label": "Pricing Error",
-        "amount": 26708.14,
-        "count": 287
+        "amount": 26428.95,
+        "count": 285
       },
       {
         "type": "short_ship",
         "label": "Short Ship",
-        "amount": 17320.02,
-        "count": 869
+        "amount": 17234.72,
+        "count": 865
       },
       {
         "type": "late_delivery",
@@ -203,14 +203,8 @@
       {
         "type": "slotting",
         "label": "Slotting",
-        "amount": 18755.75,
-        "count": 179
-      },
-      {
-        "type": "spoilage",
-        "label": "Spoilage",
-        "amount": 16904.28,
-        "count": 183
+        "amount": 18424.34,
+        "count": 177
       },
       {
         "type": "damaged",
@@ -219,16 +213,22 @@
         "count": 175
       },
       {
-        "type": "pricing_error",
-        "label": "Pricing Error",
-        "amount": 16543.22,
-        "count": 166
+        "type": "spoilage",
+        "label": "Spoilage",
+        "amount": 16689.29,
+        "count": 182
       },
       {
         "type": "promo_billback",
         "label": "Promo Billback",
         "amount": 16491.49,
         "count": 180
+      },
+      {
+        "type": "pricing_error",
+        "label": "Pricing Error",
+        "amount": 16357.27,
+        "count": 164
       },
       {
         "type": "label_fine",
@@ -245,8 +245,8 @@
       {
         "type": "short_ship",
         "label": "Short Ship",
-        "amount": 6655.48,
-        "count": 338
+        "amount": 6595.48,
+        "count": 335
       }
     ],
     "Regional natural grocer": [
@@ -265,20 +265,20 @@
       {
         "type": "label_fine",
         "label": "Label Fine",
-        "amount": 24681.22,
-        "count": 253
+        "amount": 24541.25,
+        "count": 252
       },
       {
         "type": "damaged",
         "label": "Damaged",
-        "amount": 24226.48,
-        "count": 237
+        "amount": 24210.89,
+        "count": 236
       },
       {
         "type": "pallet_fine",
         "label": "Pallet Fine",
-        "amount": 23477.52,
-        "count": 249
+        "amount": 23459.49,
+        "count": 248
       },
       {
         "type": "promo_billback",
@@ -295,8 +295,8 @@
       {
         "type": "short_ship",
         "label": "Short Ship",
-        "amount": 11423.13,
-        "count": 575
+        "amount": 11403.13,
+        "count": 574
       },
       {
         "type": "late_delivery",
@@ -315,8 +315,8 @@
       {
         "type": "damaged",
         "label": "Damaged",
-        "amount": 32433.19,
-        "count": 340
+        "amount": 32172.43,
+        "count": 338
       },
       {
         "type": "pallet_fine",
@@ -327,46 +327,46 @@
       {
         "type": "slotting",
         "label": "Slotting",
-        "amount": 30050.41,
-        "count": 329
+        "amount": 29805.6,
+        "count": 328
       },
       {
         "type": "pricing_error",
         "label": "Pricing Error",
-        "amount": 29768.47,
-        "count": 333
+        "amount": 29683.63,
+        "count": 332
       },
       {
         "type": "label_fine",
         "label": "Label Fine",
-        "amount": 28360.03,
-        "count": 316
+        "amount": 28207.85,
+        "count": 314
       },
       {
         "type": "promo_billback",
         "label": "Promo Billback",
-        "amount": 27537.41,
-        "count": 315
+        "amount": 27348.17,
+        "count": 313
       },
       {
         "type": "short_ship",
         "label": "Short Ship",
-        "amount": 20861.94,
-        "count": 1049
+        "amount": 20680.67,
+        "count": 1040
       },
       {
         "type": "late_delivery",
         "label": "Late Delivery",
-        "amount": 4810.68,
-        "count": 141
+        "amount": 4785.68,
+        "count": 140
       }
     ],
     "Natural grocer": [
       {
         "type": "damaged",
         "label": "Damaged",
-        "amount": 32695.33,
-        "count": 296
+        "amount": 32422.38,
+        "count": 292
       },
       {
         "type": "pricing_error",
@@ -401,14 +401,14 @@
       {
         "type": "pallet_fine",
         "label": "Pallet Fine",
-        "amount": 26214.92,
-        "count": 272
+        "amount": 26083.76,
+        "count": 270
       },
       {
         "type": "short_ship",
         "label": "Short Ship",
-        "amount": 11460.79,
-        "count": 565
+        "amount": 11420.79,
+        "count": 563
       },
       {
         "type": "late_delivery",

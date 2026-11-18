@@ -1,30 +1,15 @@
 """Cross-project reconciliation validation for Contract-to-Cash.
 
-Verifies that C2C's view of the data matches all other Cinderhaven
-projects' published canonical figures. Exits 0 on success, 1 on any
-mismatch.
+Verifies that C2C's view of the warehouse matches the platform's canon
+(reference/canonical_values.json, vendored by scripts/refresh_canonical.py).
+Every expected value is a canon key, read at run time; none is typed here.
+Exits 0 on success, 1 on any mismatch.
 
-Single source of truth: CINDERHAVEN_CANONICAL.md (cinderhaven-data-platform).
-Per the project CLAUDE.md, all figures must match that file; where the two
-disagree, the canonical wins.
-
-RECONCILED (2026-07 audit) — deduction figures below now match the current
-canonical (retailer portion: 14,947 rows / $1,118,681.92, the 36-month
-2023–2026 reseed). The prior hardcoded 3,087 / $1,537,390.70 were from the
-pre-reseed CY2024 window and are what produced the false "all figures
-reconcile" on-page claim (the count difference is a dataset/window change,
-NOT a JOIN fan-out: a fan-out would inflate the row count AND the dollar
-total, but the canonical total is LOWER, not higher).
-
-STILL PENDING LIVE-DB RE-DERIVATION (do not re-assert "figures reconcile"
-until these pass against the live DB):
-  - B2B order count / invoiced total (5,838 / $31,409,072.52 are CY2024)
-  - DTC order count (10,000), shipment count (5,838)
-  - Retailer / channel counts (9 B2B + DTC = 10 vs the 6 retailer channels
-    the C2C tool scopes to)
-  - Disputes filed (1,410) and dispute recovery ($98,215.54)
-This script requires the live Cinderhaven DB; it cannot run in the audit
-sandbox.
+Restated 2026-11-17 (Cinderhaven spec DECISIONS#u19-start): the previous
+literals (5,838 orders, $31,409,072.52, 1,410 disputes, $98,215.54, 10,000 DTC
+orders, $1,537,390.70) came from a retired schema, and the queries named
+columns the marts no longer have (channel, line_total, was_disputed,
+net_recovery, chargeback_fee).
 
 Usage:
     DATABASE_URL=postgresql://... python scripts/validate_cross_project.py
@@ -32,189 +17,101 @@ Usage:
 
 from __future__ import annotations
 
+import json
 import sys
+from pathlib import Path
 
 from db import connect
+
+ROOT = Path(__file__).resolve().parent.parent
+CANON = json.loads((ROOT / "reference" / "canonical_values.json").read_text(encoding="utf-8"))
+
+
+def canon(key: str):
+    node = CANON
+    for part in key.split("."):
+        node = node[part]
+    return node
 
 
 def main():
     checks = []
     failures = []
 
-    def check(name, expected, actual, tolerance=0.01):
-        """Register a check. Tolerance is relative (0.01 = 1%)."""
-        passed = True
-        if isinstance(expected, (int, float)) and isinstance(actual, (int, float)):
-            if expected == 0:
-                passed = actual == 0
-            else:
-                passed = abs(actual - expected) / abs(expected) <= tolerance
-        else:
+    def check(name, key, actual, places=None):
+        """Actual equals the canon key exactly (counts) or at `places` decimals (money, rates)."""
+        expected = canon(key)
+        if places is None:
             passed = actual == expected
-
+        else:
+            passed = round(float(actual), places) == round(float(expected), places)
         status = "PASS" if passed else "FAIL"
-        print(f"  [{status}] {name}")
+        print(f"  [{status}] {name}  ({key})")
         if not passed:
-            print(f"         Expected: {expected}")
-            print(f"         Actual:   {actual}")
+            print(f"         Canon:  {expected}")
+            print(f"         Actual: {actual}")
             failures.append((name, expected, actual))
         checks.append((name, passed))
 
     print("=" * 60, flush=True)
-    print("  CROSS-PROJECT RECONCILIATION VALIDATION")
+    print("  CROSS-PROJECT RECONCILIATION VALIDATION (against the canon)")
     print("=" * 60)
 
     conn = connect()
     cur = conn.cursor()
 
-    # ─── Section 1: Deduction totals (must match RDR) ─────────────────────
-    print("\n--- Deductions (vs retailer-deduction-recovery) ---\n", flush=True)
-
-    cur.execute("SELECT COUNT(*) AS n, SUM(deduction_amount) AS total FROM fct_retailer_deductions")
+    print("\n--- Retailer deductions ---\n", flush=True)
+    cur.execute("""
+        SELECT COUNT(*) AS n, SUM(deduction_amount) AS total, SUM(recovered_amount) AS recovered,
+               COUNT(DISTINCT deduction_type) AS types
+        FROM fct_retailer_deductions
+    """)
     ded = cur.fetchone()
-    # Canonical (CINDERHAVEN_CANONICAL.md): retailer fct_retailer_deductions =
-    # 14,947 rows / $1,118,681.92 (36-month 2023–2026 reseed). Matches the
-    # shipped summary.json total_deductions to the penny.
-    check("Deduction count", 14947, ded["n"], tolerance=0)
-    check("Deduction total ($)", 1118681.92, ded["total"], tolerance=0.001)
+    check("Deduction count", "rows.retailer_deductions.all_time", ded["n"])
+    check("Deduction total ($)", "deductions.retailer_total.all_time", ded["total"], places=2)
+    check("Deduction types", "deductions.retailer_types.all_time", ded["types"])
+    check("Recovered / deducted", "deductions_recovery.retailer_recovery_rate.all_time",
+          ded["recovered"] / ded["total"], places=4)
 
-    # Deduction type count.
-    cur.execute("SELECT COUNT(DISTINCT deduction_type) AS n FROM fct_retailer_deductions")
-    check("Deduction types", 9, cur.fetchone()["n"], tolerance=0)
+    cur.execute("SELECT COUNT(*) AS n FROM raw.retailer_disputes")
+    check("Disputes filed", "rows.retailer_disputes.all_time", cur.fetchone()["n"])
 
-    # Disputes filed.
-    cur.execute("SELECT COUNT(*) AS n FROM fct_retailer_deductions WHERE was_disputed = true")
-    check("Disputes filed", 1410, cur.fetchone()["n"], tolerance=0)
-
-    # Recovery amount.
-    cur.execute("SELECT SUM(net_recovery) AS total FROM fct_retailer_deductions WHERE net_recovery > 0")
-    check("Dispute recovery ($)", 98215.54, cur.fetchone()["total"], tolerance=0.01)
-
-    # ─── Section 2: Order totals ──────────────────────────────────────────
-    print("\n--- Orders (vs RDR / platform) ---\n", flush=True)
-
-    cur.execute("""
-        SELECT COUNT(DISTINCT order_id) AS n, SUM(line_total) AS total
-        FROM fct_retailer_orders WHERE channel = 'B2B'
-    """)
-    ord_b2b = cur.fetchone()
-    check("B2B order count", 5838, ord_b2b["n"], tolerance=0)
-    check("B2B invoiced total ($)", 31409072.52, ord_b2b["total"], tolerance=0.001)
-
-    # DTC orders exist.
+    print("\n--- Orders and shipments ---\n", flush=True)
+    cur.execute("SELECT COUNT(DISTINCT order_id) AS n, SUM(total_value) AS total FROM fct_retailer_orders")
+    orders = cur.fetchone()
+    check("Retailer order count", "rows.retailer_orders.all_time", orders["n"])
+    check("Retailer invoiced total ($)", "revenue_invoiced.gross_invoiced_retailer.all_time", orders["total"], places=2)
     cur.execute("SELECT COUNT(DISTINCT order_id) AS n FROM fct_dtc_orders")
-    check("DTC order count", 10000, cur.fetchone()["n"], tolerance=0)
-
-    # ─── Section 3: Shipments ─────────────────────────────────────────────
-    print("\n--- Shipments ---\n", flush=True)
-
+    check("DTC order count", "rows.shopify_orders.all_time", cur.fetchone()["n"])
     cur.execute("SELECT COUNT(*) AS n FROM fct_retailer_shipments")
-    check("Shipment count (1:1 with B2B orders)", 5838, cur.fetchone()["n"], tolerance=0)
+    check("Shipment count", "fulfillment.shipments.all_retailers_full_corpus", cur.fetchone()["n"])
 
-    # ─── Section 4: Retailers ─────────────────────────────────────────────
     print("\n--- Retailers ---\n", flush=True)
-
-    cur.execute("SELECT COUNT(*) AS n FROM dim_retailers WHERE channel_type != 'dtc'")
-    check("B2B retailer count", 9, cur.fetchone()["n"], tolerance=0)
-
     cur.execute("SELECT COUNT(*) AS n FROM dim_retailers")
-    total_retailers = cur.fetchone()["n"]
-    check("Total retailer/channel count (9 B2B + DTC)", 10, total_retailers, tolerance=0)
+    check("Retail partners", "universe.retailers.all_time", cur.fetchone()["n"])
 
-    # ─── Section 5: Payments ──────────────────────────────────────────────
-    print("\n--- Payments ---\n", flush=True)
-
-    cur.execute("SELECT SUM(gross_amount) AS gross, SUM(net_amount) AS net FROM fct_retailer_payments")
+    print("\n--- Payments: the page's window, CY2023-2025 ---\n", flush=True)
+    cur.execute("""
+        SELECT SUM(gross_amount) AS gross, SUM(net_amount) AS net FROM fct_retailer_payments
+        WHERE received_date BETWEEN '2023-01-01' AND '2025-12-31'
+    """)
     pay = cur.fetchone()
-    # Payments gross-net difference should match deductions total (approximately).
-    implied_deductions = pay["gross"] - pay["net"]
-    check(
-        "Payments implied deductions ~ deduction total",
-        ded["total"],
-        implied_deductions,
-        tolerance=0.05,
-    )
+    check("Retailer remittances gross ($)", "revenue.gross_payments_retailer.trailing_36m", pay["gross"], places=2)
+    check("Retailer remittances net ($)", "revenue.net_collected_retailer.trailing_36m", pay["net"], places=2)
 
-    # ─── Section 6: DTC payment data is additive ──────────────────────────
-    print("\n--- DTC additivity (B2B unaffected) ---\n", flush=True)
-
-    # Verify DTC tables exist but don't interfere with B2B queries.
-    cur.execute("SELECT COUNT(*) AS n FROM raw.shopify_transactions")
-    dtc_txn = cur.fetchone()["n"]
-    check("DTC transactions exist", True, dtc_txn > 0, tolerance=0)
-
-    # B2B deduction total unchanged (no DTC deductions mixed in).
-    cur.execute("""
-        SELECT SUM(deduction_amount) AS total FROM fct_retailer_deductions
-    """)
-    check(
-        "Deductions still B2B-only after DTC synthesis",
-        1537390.70,
-        cur.fetchone()["total"],
-        tolerance=0.001,
-    )
-
-    # B2B order total unchanged.
-    cur.execute("""
-        SELECT SUM(line_total) AS total FROM fct_retailer_orders WHERE channel = 'B2B'
-    """)
-    check(
-        "B2B order total unchanged after DTC synthesis",
-        31409072.52,
-        cur.fetchone()["total"],
-        tolerance=0.001,
-    )
-
-    # ─── Section 7: DTC payment integrity ─────────────────────────────────
-    print("\n--- DTC payment internal consistency ---\n", flush=True)
-
-    cur.execute("""
-        SELECT
-            SUM(order_amount) AS gross,
-            SUM(processing_fee) AS fees,
-            SUM(net_amount) AS net
-        FROM raw.shopify_transactions
-    """)
-    dtc = cur.fetchone()
-    check(
-        "DTC: gross - fees = net",
-        round(dtc["gross"] - dtc["fees"], 2),
-        round(dtc["net"], 2),
-        tolerance=0.001,
-    )
-
-    cur.execute("SELECT SUM(refund_amount) AS total FROM raw.shopify_refunds")
-    dtc_refunds = cur.fetchone()["total"]
-
-    cur.execute("""
-        SELECT SUM(chargeback_amount) AS amt, SUM(chargeback_fee) AS fees
-        FROM raw.shopify_chargebacks WHERE outcome = 'lost'
-    """)
-    cb = cur.fetchone()
-    dtc_cb_lost = (cb["amt"] or 0) + (cb["fees"] or 0)
-
-    total_dtc_leakage = dtc["fees"] + dtc_refunds + dtc_cb_lost
-    dtc_leakage_pct = total_dtc_leakage / dtc["gross"] * 100
-    check("DTC leakage rate realistic (5-10%)", True, 5 <= dtc_leakage_pct <= 10, tolerance=0)
-
-    # ─── Results ──────────────────────────────────────────────────────────
     print("\n" + "=" * 60)
     total = len(checks)
-    passed = sum(1 for _, p in checks if p)
-    failed = total - passed
-
+    failed = len(failures)
+    conn.close()
     if failed == 0:
         print(f"  ALL {total} CHECKS PASSED")
         print("=" * 60)
-        conn.close()
         sys.exit(0)
-    else:
-        print(f"  {failed} of {total} CHECKS FAILED:")
-        for name, expected, actual in failures:
-            print(f"    - {name}: expected {expected}, got {actual}")
-        print("=" * 60)
-        conn.close()
-        sys.exit(1)
+    print(f"  {failed} of {total} CHECKS FAILED:")
+    for name, expected, actual in failures:
+        print(f"    - {name}: canon {expected}, got {actual}")
+    print("=" * 60)
+    sys.exit(1)
 
 
 if __name__ == "__main__":

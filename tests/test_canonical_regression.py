@@ -87,7 +87,9 @@ class TestCinderhavenCanonicalRegression:
     # ------------------------------------------------------------------
 
     def test_cents_per_dollar_matches_canonical(self, summary: dict) -> None:
-        """Lifecycle yield on the canonical 36-month window: 87.3 combined.
+        """Lifecycle yield on CY2023-2025 equals the canon key
+        lifecycle.retailer_dtc_cents_per_dollar.trailing_36m (owner, 2026-11-17),
+        not a typed literal. The history below is superseded.
 
         CINDERHAVEN_CANONICAL.md (VERIFIED-AGAINST-PRODUCTION 2026-07-29)
         pins the lifecycle at 87.2 cents retailer / 87.3 combined, superseding
@@ -96,8 +98,9 @@ class TestCinderhavenCanonicalRegression:
         so this is a cited literal, ±0.5 per check_canonical rate tolerance.
         """
         cpd = summary["combined"]["cents_per_dollar"]
-        assert abs(cpd - 87.3) <= 0.5, (
-            f"Expected 87.3 cents per dollar (canonical combined), got {cpd}"
+        key = CANON["lifecycle"]["retailer_dtc_cents_per_dollar"]["trailing_36m"]
+        assert cpd == round(key, 1), (
+            f"Expected {round(key, 1)} cents per dollar (canon key), got {cpd}"
         )
 
     def test_cents_per_dollar_matches_ratio(self, summary: dict) -> None:

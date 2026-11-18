@@ -1,75 +1,75 @@
 {
   "b2b": {
-    "gross": 52128777.36,
-    "net": 45467554.01,
+    "gross": 49885034.4,
+    "net": 43470341.01,
     "stages": [
       {
         "stage": "damaged",
         "label": "Damaged",
-        "amount": 153586.75,
-        "count": 1558,
+        "amount": 152867.73,
+        "count": 1549,
         "recovered": 25613.61
       },
       {
         "stage": "slotting",
         "label": "Slotting",
-        "amount": 149528.92,
-        "count": 1546,
+        "amount": 148784.16,
+        "count": 1541,
         "recovered": 0
       },
       {
         "stage": "spoilage",
         "label": "Spoilage",
-        "amount": 148591.0,
-        "count": 1573,
+        "amount": 148376.01,
+        "count": 1572,
         "recovered": 24014.21
       },
       {
         "stage": "pricing_error",
         "label": "Pricing Error",
-        "amount": 148467.3,
-        "count": 1514,
+        "amount": 147917.32,
+        "count": 1509,
         "recovered": 24220.69
       },
       {
         "stage": "pallet_fine",
         "label": "Pallet Fine",
-        "amount": 145355.41,
-        "count": 1558,
+        "amount": 145002.34,
+        "count": 1552,
         "recovered": 24340.54
       },
       {
         "stage": "promo_billback",
         "label": "Promo Billback",
-        "amount": 145082.2,
-        "count": 1550,
+        "amount": 144472.56,
+        "count": 1543,
         "recovered": 23214.97
       },
       {
         "stage": "label_fine",
         "label": "Label Fine",
-        "amount": 142091.24,
-        "count": 1510,
+        "amount": 141799.09,
+        "count": 1507,
         "recovered": 23671.97
       },
       {
         "stage": "short_ship",
         "label": "Short Ship",
-        "amount": 77872.07,
-        "count": 3904,
+        "amount": 77379.74,
+        "count": 3879,
         "recovered": 12509.29
       },
       {
         "stage": "late_delivery",
         "label": "Late Delivery",
-        "amount": 8107.03,
-        "count": 234,
-        "recovered": 1397.47
+        "amount": 8082.03,
+        "count": 233,
+        "recovered": 1380.76
       },
       {
         "stage": "unreconciled",
         "label": "Unreconciled / trade spend not itemized",
-        "amount": 5542541.43,
+        "amount": 5300012.41,
         "count": 0,
         "recovered": 0
       }
@@ -77,12 +77,12 @@
   },
   "dtc": {
     "gross": 563837.43,
-    "net": 523756.82,
+    "net": 523794.2,
     "stages": [
       {
         "stage": "processing_fees",
         "label": "Processing Fees",
-        "amount": 16951.33
+        "amount": 16913.95
       },
       {
         "stage": "refunds",

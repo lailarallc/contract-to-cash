@@ -65,10 +65,12 @@ def main() -> None:
     dtc = summary["dtc"]
     combined = summary["combined"]
 
+    # One basis (owner, 2026-11-17): B2B gross on the remittances received in the
+    # window, not b2b.invoiced (orders placed in it, some paid after it ends).
     check(
-        "Combined invoiced = B2B invoiced + DTC gross",
+        "Combined invoiced = B2B remittance gross + DTC gross",
         combined["total_invoiced"],
-        round(b2b["invoiced"] + dtc["gross"], 2),
+        round(b2b["gross_payments"] + dtc["gross"], 2),
     )
 
     check(
